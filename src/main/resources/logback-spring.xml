@@ -1,0 +1,36 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="AUDIT_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/payment-audit.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/payment-audit.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="PAYMENT_AUDIT" level="INFO" additivity="false">
+        <appender-ref ref="AUDIT_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <property name="SQL_LOG_LEVEL" value="${SQL_LOG_LEVEL:-DEBUG}"/>
+    <property name="SQL_BIND_LOG_LEVEL" value="${SQL_BIND_LOG_LEVEL:-TRACE}"/>
+    <logger name="org.hibernate.SQL" level="${SQL_LOG_LEVEL}"/>
+    <logger name="org.hibernate.orm.jdbc.bind" level="${SQL_BIND_LOG_LEVEL}"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
